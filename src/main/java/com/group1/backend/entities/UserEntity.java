@@ -1,28 +1,22 @@
-package com.group1.backend.user;
+package com.group1.backend.entities;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-@Setter
-@Getter
 @Entity
 @Table(name = "user")
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int user_id;
+    private int userId;
 
     private String name;
-
     private String email;
-
     private String password;
-
+    private String role;
+    private int totalScore;
     // todo: add private List<Score> scores;  score hold: date + score + placement
 }
