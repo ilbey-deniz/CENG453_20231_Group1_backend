@@ -57,7 +57,7 @@ public class UserController {
     }*/
     @PostMapping("/saveScore")
     public ResponseEntity<String> saveScore(@RequestBody ScoreDto scoreDto){
-        userService.saveUserScoreByName(scoreDto.getName(), scoreDto.getScore(), scoreDto.getTime());
+        userService.saveUserScoreByName(scoreDto.getName(), scoreDto.getScore());
         return new ResponseEntity<>("Score saved success!", HttpStatus.OK);
     }
 }

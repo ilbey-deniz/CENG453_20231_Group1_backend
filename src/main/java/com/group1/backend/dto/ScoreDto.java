@@ -10,5 +10,4 @@ import lombok.Getter;
 public class ScoreDto {
     private String name;
     private int score;
-    private String time;
 }
