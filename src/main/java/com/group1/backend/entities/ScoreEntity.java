@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -16,7 +17,7 @@ public class ScoreEntity {
     private int scoreId;
 
     private int score;
-    private Date time;
+    private LocalDate time;
 
     @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName="id")

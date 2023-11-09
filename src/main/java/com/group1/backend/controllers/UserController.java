@@ -1,6 +1,7 @@
 package com.group1.backend.controllers;
 
 import com.group1.backend.dto.RegisterCredentialDto;
+import com.group1.backend.dto.ScoreDto;
 import com.group1.backend.entities.UserEntity;
 import com.group1.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +47,17 @@ public class UserController {
         String role = "ROLE_ADMIN";
         user.setRole(role);
 
-        userService.saveRepository(user);
+        userService.saveUser(user);
 
         return new ResponseEntity<>("User registered success!", HttpStatus.OK);
     }
-    //@GetMapping("/leaderboard/{time}")
+    /*@GetMapping("/leaderboard/{time}")
+    public List<UserEntity> getLeaderboard(@PathVariable String time){
+        return userService.getLeaderboard(time);
+    }*/
+    @PostMapping("/saveScore")
+    public ResponseEntity<String> saveScore(@RequestBody ScoreDto scoreDto){
+        userService.saveUserScoreByName(scoreDto.getName(), scoreDto.getScore(), scoreDto.getTime());
+        return new ResponseEntity<>("Score saved success!", HttpStatus.OK);
+    }
 }
