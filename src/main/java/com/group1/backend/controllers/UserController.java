@@ -14,7 +14,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
@@ -46,10 +46,9 @@ public class UserController {
         String role = "ROLE_ADMIN";
         user.setRole(role);
 
-        user.setTotalScore(0);
-
         userService.saveRepository(user);
 
         return new ResponseEntity<>("User registered success!", HttpStatus.OK);
     }
+    //@GetMapping("/leaderboard/{time}")
 }

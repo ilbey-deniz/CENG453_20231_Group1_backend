@@ -1,5 +1,6 @@
 package com.group1.backend.services;
 
+import com.group1.backend.entities.ScoreEntity;
 import com.group1.backend.entities.UserEntity;
 import com.group1.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +36,10 @@ public class UserService {
     public void saveRepository(UserEntity user){
         this.userRepository.save(user);
     }
+
+//    public void addScoreToUser(ScoreEntity scoreEntity, UserEnt){
+//        User
+//    }
+
 
 }

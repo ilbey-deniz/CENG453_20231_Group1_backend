@@ -4,6 +4,8 @@ package com.group1.backend.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @Entity
@@ -11,12 +13,17 @@ import lombok.*;
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int userId;
+    private int id;
 
     private String name;
     private String email;
     private String password;
     private String role;
-    private int totalScore;
-    // todo: add private List<Score> scores;  score hold: date + score + placement
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ScoreEntity> scores;
 }
