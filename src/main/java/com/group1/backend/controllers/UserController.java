@@ -32,7 +32,7 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterCredentialDto registerDto) {
         if (userService.IsUserExistByName(registerDto.getName())) {
             return new ResponseEntity<>("Username is already taken!", HttpStatus.BAD_REQUEST);
