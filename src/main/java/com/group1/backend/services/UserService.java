@@ -45,16 +45,17 @@ public class UserService {
         this.userRepository.save(user);
     }
 
-    public void saveUserScoreByName(String userName, int score, String time){
+    public void saveUserScoreByName(String userName, int score){
         Optional<UserEntity> user = this.userRepository.findByName(userName);
 
         ScoreEntity scoreEntity = new ScoreEntity();
         scoreEntity.setUser(user.orElseThrow());
         scoreEntity.setScore(score);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDate fTime = LocalDate.parse(time, formatter);
-        scoreEntity.setTime(fTime);
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//        LocalDate fTime = LocalDate.parse(time, formatter);
+        LocalDate now = LocalDate.now();
+        scoreEntity.setTime(now);
 
         scoreEntity.setUser(user.orElseThrow());
 
