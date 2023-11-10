@@ -1,9 +1,9 @@
 package com.group1.backend.services;
 
-import com.group1.backend.dto.ScoreDto;
 import com.group1.backend.dto.TopScoreUserDto;
 import com.group1.backend.entities.ScoreEntity;
 import com.group1.backend.entities.UserEntity;
+import com.group1.backend.enums.TimeInterval;
 import com.group1.backend.repositories.ScoreRepository;
 import com.group1.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,10 +39,6 @@ public class UserService {
         return this.userRepository.existsByName(userName);
     }
 
-    public String getRoleByName(String userName){
-        Optional<UserEntity> user = this.userRepository.findByName(userName);
-        return user.orElseThrow().getRole();
-    }
 
     public void saveUser(UserEntity user){
         this.userRepository.save(user);
@@ -66,9 +63,14 @@ public class UserService {
 
 
 
-    public List<TopScoreUserDto> findTopScorerDescending(){
+    public List<TopScoreUserDto> findTopScorerDescending(TimeInterval timeInterval){
+        Collection<Object[]> dataCollection = switch (timeInterval) {
+            case WEEKLY -> scoreRepository.findTopScorerWeekly();
+            case MONTHLY -> scoreRepository.findTopScorerMonthly();
+            default -> scoreRepository.findTopScorerAllTime();
+        };
 
-        return scoreRepository.findTopScorerDescending().
+        return dataCollection.
                 stream().map(data -> new TopScoreUserDto((String) data[0], (BigDecimal) data[1])).toList();
 
     }

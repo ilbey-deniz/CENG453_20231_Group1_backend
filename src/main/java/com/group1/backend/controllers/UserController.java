@@ -4,6 +4,7 @@ import com.group1.backend.dto.RegisterCredentialDto;
 import com.group1.backend.dto.ScoreDto;
 import com.group1.backend.dto.TopScoreUserDto;
 import com.group1.backend.entities.UserEntity;
+import com.group1.backend.enums.TimeInterval;
 import com.group1.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,9 +35,21 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/get/topScorers")
-    public List<TopScoreUserDto> getTopScorers(){
-        return userService.findTopScorerDescending();
+    @GetMapping("/get/topScorers/weekly")
+    public List<TopScoreUserDto> getTopScorersWeekly(){
+        return userService.findTopScorerDescending(TimeInterval.WEEKLY);
+    }
+
+
+    @GetMapping("/get/topScorers/monthly")
+    public List<TopScoreUserDto> getTopScorersMonthly(){
+        return userService.findTopScorerDescending(TimeInterval.MONTHLY);
+    }
+
+
+    @GetMapping("/get/topScorers/all")
+    public List<TopScoreUserDto> getTopScorersOfAll(){
+        return userService.findTopScorerDescending(TimeInterval.ALL);
     }
 
     @PostMapping("/register")
