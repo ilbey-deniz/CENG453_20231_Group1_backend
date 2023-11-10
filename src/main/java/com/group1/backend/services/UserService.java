@@ -1,5 +1,7 @@
 package com.group1.backend.services;
 
+import com.group1.backend.dto.ScoreDto;
+import com.group1.backend.dto.TopScoreUserDto;
 import com.group1.backend.entities.ScoreEntity;
 import com.group1.backend.entities.UserEntity;
 import com.group1.backend.repositories.ScoreRepository;
@@ -8,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,5 +64,13 @@ public class UserService {
         this.scoreRepository.save(scoreEntity);
     }
 
+
+
+    public List<TopScoreUserDto> findTopScorerDescending(){
+
+        return scoreRepository.findTopScorerDescending().
+                stream().map(data -> new TopScoreUserDto((String) data[0], (BigDecimal) data[1])).toList();
+
+    }
 
 }

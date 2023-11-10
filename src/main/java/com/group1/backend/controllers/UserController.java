@@ -2,6 +2,7 @@ package com.group1.backend.controllers;
 
 import com.group1.backend.dto.RegisterCredentialDto;
 import com.group1.backend.dto.ScoreDto;
+import com.group1.backend.dto.TopScoreUserDto;
 import com.group1.backend.entities.UserEntity;
 import com.group1.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,11 @@ public class UserController {
     @GetMapping("/get/users")
     public List<UserEntity> findAllUsers(){
         return userService.getAllUsers();
+    }
+
+    @GetMapping("/get/topScorers")
+    public List<TopScoreUserDto> getTopScorers(){
+        return userService.findTopScorerDescending();
     }
 
     @PostMapping("/register")
