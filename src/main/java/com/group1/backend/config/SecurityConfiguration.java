@@ -1,5 +1,6 @@
-package com.group1.backend.security;
+package com.group1.backend.config;
 
+import com.group1.backend.services.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

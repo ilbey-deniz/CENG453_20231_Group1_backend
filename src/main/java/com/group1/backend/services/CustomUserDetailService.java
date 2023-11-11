@@ -1,4 +1,4 @@
-package com.group1.backend.security;
+package com.group1.backend.services;
 
 import com.group1.backend.entities.UserEntity;
 import com.group1.backend.repositories.UserRepository;
