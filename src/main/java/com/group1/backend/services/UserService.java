@@ -51,8 +51,6 @@ public class UserService {
         scoreEntity.setUser(user.orElseThrow());
         scoreEntity.setScore(score);
 
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        LocalDate fTime = LocalDate.parse(time, formatter);
         LocalDate now = LocalDate.now();
         scoreEntity.setTime(now);
 
