@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 //Very important, releases the connection after the transaction is done
@@ -34,12 +35,20 @@ public class UserService {
         return this.userRepository.findByName(userName);
     }
 
+    public Optional<UserEntity> getUserByEmail(String email){
+        return this.userRepository.findByEmail(email);
+    }
+
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
     }
 
     public boolean IsUserExistByName(String userName){
         return this.userRepository.existsByName(userName);
+    }
+
+    public boolean IsUserExistByEmail(String email){
+        return this.userRepository.existsByEmail(email);
     }
 
 
@@ -76,4 +85,15 @@ public class UserService {
 
     }
 
+    public String generateRandomPassword(int i) {
+        Random random = new Random();
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder pass = new StringBuilder();
+        for(int x=0;x<i;x++)
+        {
+            int j = (int) (random.nextInt(chars.length()));
+            pass.append(chars.charAt(j));
+        }
+        return pass.toString();
+    }
 }

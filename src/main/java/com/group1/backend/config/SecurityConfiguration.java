@@ -29,7 +29,8 @@ public class SecurityConfiguration {
     private final String[] WHITELIST = new String[]{
             "/api/register",
             "/api/login",
-            "/api/forgotPassword"
+            "/api/forgotPassword",
+            "/api/testemail"
     };
 
     @Autowired
