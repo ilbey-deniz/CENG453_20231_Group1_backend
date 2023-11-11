@@ -70,10 +70,7 @@ public class UserController {
 
         return new ResponseEntity<>("User registered success!", HttpStatus.OK);
     }
-    /*@GetMapping("/leaderboard/{time}")
-    public List<UserEntity> getLeaderboard(@PathVariable String time){
-        return userService.getLeaderboard(time);
-    }*/
+
     @PostMapping("/saveScore")
     public ResponseEntity<String> saveScore(@RequestBody ScoreDto scoreDto){
         userService.saveUserScoreByName(scoreDto.getName(), scoreDto.getScore());
