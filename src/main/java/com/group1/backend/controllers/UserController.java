@@ -1,10 +1,12 @@
 package com.group1.backend.controllers;
 
+import com.group1.backend.dto.LoginDto;
 import com.group1.backend.dto.RegisterCredentialDto;
 import com.group1.backend.dto.ScoreDto;
 import com.group1.backend.dto.TopScoreUserDto;
 import com.group1.backend.entities.UserEntity;
 import com.group1.backend.enums.TimeInterval;
+import com.group1.backend.services.JwtService;
 import com.group1.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,11 +24,13 @@ public class UserController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @Autowired
-    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
 
@@ -67,8 +71,21 @@ public class UserController {
         user.setRole(role);
 
         userService.saveUser(user);
+        var token = jwtService.generateToken(user);
+        return new ResponseEntity<>(token, HttpStatus.OK);
 
-        return new ResponseEntity<>("User registered success!", HttpStatus.OK);
+    }
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+        if (!userService.IsUserExistByName(loginDto.getName())) {
+            return new ResponseEntity<>("Username is not found!", HttpStatus.BAD_REQUEST);
+        }
+        UserEntity user = userService.getUserByName(loginDto.getName()).orElseThrow();
+        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+            return new ResponseEntity<>("Password is incorrect!", HttpStatus.BAD_REQUEST);
+        }
+        var token = jwtService.generateToken(user);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @PostMapping("/saveScore")

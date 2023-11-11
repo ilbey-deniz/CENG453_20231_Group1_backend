@@ -1,5 +1,6 @@
 package com.group1.backend.services;
 
+import com.group1.backend.entities.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -33,12 +34,12 @@ public class JwtService {
         return SECRET_KEY.getBytes();
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserEntity userEntity) {
         return Jwts
                 .builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(userEntity.getName())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 3))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .signWith(SignatureAlgorithm.HS256, getSecretKey())
                 .compact();
 

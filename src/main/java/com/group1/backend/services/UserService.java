@@ -30,6 +30,9 @@ public class UserService {
         this.scoreRepository = scoreRepository;
     }
 
+    public Optional<UserEntity> getUserByName(String userName){
+        return this.userRepository.findByName(userName);
+    }
 
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
