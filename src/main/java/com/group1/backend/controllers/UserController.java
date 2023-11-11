@@ -124,4 +124,18 @@ public class UserController {
         return new ResponseEntity<>("Email sent success!", HttpStatus.OK);
     }
 
+    @PostMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordDto changePasswordDto){
+        if (!userService.IsUserExistByName(changePasswordDto.getName())) {
+            return new ResponseEntity<>("Username is not found!", HttpStatus.BAD_REQUEST);
+        }
+        UserEntity user = userService.getUserByName(changePasswordDto.getName()).orElseThrow();
+        if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
+            return new ResponseEntity<>("Password is incorrect!", HttpStatus.BAD_REQUEST);
+        }
+        user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        userService.saveUser(user);
+        return new ResponseEntity<>("Password changed success!", HttpStatus.OK);
+    }
+
 }

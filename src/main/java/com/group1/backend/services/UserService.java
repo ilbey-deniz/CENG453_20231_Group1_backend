@@ -91,7 +91,7 @@ public class UserService {
         StringBuilder pass = new StringBuilder();
         for(int x=0;x<i;x++)
         {
-            int j = (int) (random.nextInt(chars.length()));
+            int j = random.nextInt(chars.length());
             pass.append(chars.charAt(j));
         }
         return pass.toString();
