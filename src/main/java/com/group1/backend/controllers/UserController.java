@@ -34,7 +34,6 @@ public class UserController {
         this.emailService = emailService;
     }
 
-
     @GetMapping("/get/users")
     public List<UserEntity> findAllUsers(){
         return userService.getAllUsers();
