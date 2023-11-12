@@ -1,6 +1,7 @@
 HELP.md
 src/main/resources/application.properties
 target/classes/application.properties
+*.class
 
 ### STS ###
 .apt_generated
