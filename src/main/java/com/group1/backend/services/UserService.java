@@ -7,6 +7,7 @@ import com.group1.backend.enums.TimeInterval;
 import com.group1.backend.repositories.ScoreRepository;
 import com.group1.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +24,15 @@ import java.util.Random;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
     private final ScoreRepository scoreRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, ScoreRepository scoreRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, ScoreRepository scoreRepository) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
         this.scoreRepository = scoreRepository;
     }
 
@@ -43,14 +48,32 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public boolean IsUserExistByName(String userName){
+    public boolean isUserExistByName(String userName){
         return this.userRepository.existsByName(userName);
     }
 
-    public boolean IsUserExistByEmail(String email){
+    public boolean isUserExistByEmail(String email){
         return this.userRepository.existsByEmail(email);
     }
 
+    public String getLastTestUserName(){
+        Collection<Object> lastTestUser = this.userRepository.findLastTestUser();
+        return lastTestUser.stream().findFirst().orElseThrow().toString();
+    }
+
+    public UserEntity createUser(String name, String email, String password, String role){
+        UserEntity user = new UserEntity();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRole(role);
+        userRepository.save(user);
+        return user;
+    }
+
+    public void deleteUserByName(String userName){
+        this.userRepository.deleteByName(userName);
+    }
 
     public void saveUser(UserEntity user){
         this.userRepository.save(user);
