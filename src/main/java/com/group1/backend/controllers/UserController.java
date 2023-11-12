@@ -6,6 +6,8 @@ import com.group1.backend.enums.TimeInterval;
 import com.group1.backend.services.EmailService;
 import com.group1.backend.services.JwtService;
 import com.group1.backend.services.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "User API endpoints", description = "Involves user operations and score fetching")
 public class UserController {
 
     private final UserService userService;
@@ -34,24 +37,29 @@ public class UserController {
         this.emailService = emailService;
     }
 
+
     @GetMapping("/get/users")
+    @SecurityRequirement(name = "bearerToken")
     public List<UserEntity> findAllUsers(){
         return userService.getAllUsers();
     }
 
     @GetMapping("/get/topScorers/weekly")
+    @SecurityRequirement(name = "bearerToken")
     public List<TopScoreUserDto> getTopScorersWeekly(){
         return userService.findTopScorerDescending(TimeInterval.WEEKLY);
     }
 
 
     @GetMapping("/get/topScorers/monthly")
+    @SecurityRequirement(name = "bearerToken")
     public List<TopScoreUserDto> getTopScorersMonthly(){
         return userService.findTopScorerDescending(TimeInterval.MONTHLY);
     }
 
 
     @GetMapping("/get/topScorers/all")
+    @SecurityRequirement(name = "bearerToken")
     public List<TopScoreUserDto> getTopScorersOfAll(){
         return userService.findTopScorerDescending(TimeInterval.ALL);
     }
@@ -89,6 +97,7 @@ public class UserController {
     }
 
     @PostMapping("/saveScore")
+    @SecurityRequirement(name = "bearerToken")
     public ResponseEntity<String> saveScore(@RequestBody ScoreDto scoreDto){
         userService.saveUserScoreByName(scoreDto.getName(), scoreDto.getScore());
         return new ResponseEntity<>("Score saved success!", HttpStatus.OK);
@@ -124,6 +133,7 @@ public class UserController {
     }
 
     @PostMapping("/changePassword")
+    @SecurityRequirement(name = "bearerToken")
     public ResponseEntity<String> changePassword(@RequestBody ChangePasswordDto changePasswordDto){
         if (!userService.IsUserExistByName(changePasswordDto.getName())) {
             return new ResponseEntity<>("Username is not found!", HttpStatus.BAD_REQUEST);

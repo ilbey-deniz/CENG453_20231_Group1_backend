@@ -30,7 +30,9 @@ public class SecurityConfiguration {
             "/api/register",
             "/api/login",
             "/api/forgotPassword",
-            "/api/testemail"
+            "/api/testemail",
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
     };
 
     @Autowired
