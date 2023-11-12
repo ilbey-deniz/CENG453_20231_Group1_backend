@@ -66,18 +66,11 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterCredentialDto registerDto) {
-        if (userService.IsUserExistByName(registerDto.getName())) {
+        if (userService.isUserExistByName(registerDto.getName())) {
             return new ResponseEntity<>("Username is already taken!", HttpStatus.BAD_REQUEST);
         }
-
-        UserEntity user = new UserEntity();
-        user.setName(registerDto.getName());
-        user.setEmail(registerDto.getEmail());
-        user.setPassword(passwordEncoder.encode((registerDto.getPassword())));
-
-        String role = "ROLE_ADMIN";
-        user.setRole(role);
-
+        UserEntity user = userService.createUser(registerDto.getName(), registerDto.getEmail(),
+                registerDto.getPassword(), "ROLE_ADMIN");
         userService.saveUser(user);
         var token = jwtService.generateToken(user);
         return new ResponseEntity<>(token, HttpStatus.OK);
@@ -85,7 +78,7 @@ public class UserController {
     }
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
-        if (!userService.IsUserExistByName(loginDto.getName())) {
+        if (!userService.isUserExistByName(loginDto.getName())) {
             return new ResponseEntity<>("Username is not found!", HttpStatus.BAD_REQUEST);
         }
         UserEntity user = userService.getUserByName(loginDto.getName()).orElseThrow();
@@ -115,7 +108,7 @@ public class UserController {
     @PostMapping("/forgotPassword")
     public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordDto forgotPasswordDto){
         String email = forgotPasswordDto.getEmail();
-        if (!userService.IsUserExistByEmail(email)) {
+        if (!userService.isUserExistByEmail(email)) {
             return new ResponseEntity<>("Email is not found!", HttpStatus.BAD_REQUEST);
         }
         UserEntity user = userService.getUserByEmail(email).orElseThrow();
@@ -135,7 +128,7 @@ public class UserController {
     @PostMapping("/changePassword")
     @SecurityRequirement(name = "bearerToken")
     public ResponseEntity<String> changePassword(@RequestBody ChangePasswordDto changePasswordDto){
-        if (!userService.IsUserExistByName(changePasswordDto.getName())) {
+        if (!userService.isUserExistByName(changePasswordDto.getName())) {
             return new ResponseEntity<>("Username is not found!", HttpStatus.BAD_REQUEST);
         }
         UserEntity user = userService.getUserByName(changePasswordDto.getName()).orElseThrow();

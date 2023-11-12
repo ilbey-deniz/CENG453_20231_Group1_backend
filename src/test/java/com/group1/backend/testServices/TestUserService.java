@@ -15,7 +15,7 @@ public class TestUserService {
 
     @Test
     public void testCreateMultipleUser(){
-        int first_length = userService.getAllUsers().size();
+        int firstLength = userService.getAllUsers().size();
         String PASSWORD_PREFIX = "HardPassword";
         String USERNAME_PREFIX = "TestUser";
         String username = userService.getLastTestUserName();
@@ -26,13 +26,12 @@ public class TestUserService {
             String email = name + "@mail.com";
             userService.createUser(name, email, password, "ROLE_USER");
         }
-        int second_length = userService.getAllUsers().size();
-        Assertions.assertEquals(first_length + 10, second_length);
+        int secondLength = userService.getAllUsers().size();
+        Assertions.assertEquals(firstLength + 10, secondLength);
     }
 
     @Test
     public void testCreateUser(){
-
         String name = "TestSingleUser";
         String password = "HardPassword";
         String email = name + "TestSingleUser@mail.com";
@@ -51,11 +50,19 @@ public class TestUserService {
     @Test
     public void testDeleteUser(){
         String lastTestUserName = userService.getLastTestUserName();
-        int first_length = userService.getAllUsers().size();
+        int firstLength = userService.getAllUsers().size();
         userService.deleteUserByName(lastTestUserName);
-        int second_length = userService.getAllUsers().size();
-        Assertions.assertEquals(first_length - 1, second_length);
+        int secondLength = userService.getAllUsers().size();
+        Assertions.assertEquals(firstLength - 1, secondLength);
     }
 
+    @Test
+    public void testSaveUserScore(){
+        String username = userService.getLastTestUserName();
+        int firstTotalScore = userService.findTotalScoreByName(username);
+        userService.saveUserScoreByName(username, 7);
+        int secondTotalScore = userService.findTotalScoreByName(username);
+        Assertions.assertEquals(firstTotalScore + 7, secondTotalScore);
 
+    }
 }

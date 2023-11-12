@@ -3,6 +3,7 @@ package com.group1.backend.repositories;
 import com.group1.backend.entities.ScoreEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -41,4 +42,23 @@ public interface ScoreRepository extends JpaRepository<ScoreEntity, Integer> {
             nativeQuery = true)
     Collection<Object[]> findTopScorerAllTime();
 
+//    TODO: use this to add score to multiple user
+    @Query(
+            value = """
+                    select U.name, sum(S.score) as total_score
+                    from user U, score S
+                    where U.id = S.user_id and U.name like '%testuser%'
+                    group by U.name
+                    order by total_score desc""",
+            nativeQuery = true)
+    Collection<Object[]> findTopScorerTestUser();
+
+    @Query(
+            value = """
+                    select sum(S.score) as total_score
+                    from user U, score S
+                    where U.id = S.user_id and U.name = :name
+                    group by U.name""",
+            nativeQuery = true)
+    Collection<Object> findTotalScoreByName(@Param("name") String name);
 }

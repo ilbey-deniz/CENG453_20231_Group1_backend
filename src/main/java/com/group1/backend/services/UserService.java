@@ -94,6 +94,14 @@ public class UserService {
         this.scoreRepository.save(scoreEntity);
     }
 
+    public int findTotalScoreByName(String userName){
+        Collection<Object> totalScore = this.scoreRepository.findTotalScoreByName(userName);
+        if (totalScore.isEmpty()) {
+            return 0;
+        }
+        String score = totalScore.stream().findFirst().orElseThrow().toString();
+        return Integer.parseInt(score);
+    }
 
 
     public List<TopScoreUserDto> findTopScorerDescending(TimeInterval timeInterval){
