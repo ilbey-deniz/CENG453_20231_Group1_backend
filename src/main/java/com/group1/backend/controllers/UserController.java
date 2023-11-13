@@ -41,7 +41,9 @@ public class UserController {
     @GetMapping("/get/users")
     @SecurityRequirement(name = "bearerToken")
     public List<UserEntity> findAllUsers(){
-        return userService.getAllUsers();
+        List<UserEntity> users = userService.getAllUsers();
+        users.forEach(user -> user.setPassword("YOU ARE SECURE"));
+        return users;
     }
 
     @GetMapping("/get/topScorers/weekly")
@@ -83,7 +85,7 @@ public class UserController {
         }
         UserEntity user = userService.getUserByName(loginDto.getName()).orElseThrow();
         if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
-            return new ResponseEntity<>("Password is incorrect!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Password is incorrect!", HttpStatus.UNAUTHORIZED);
         }
         var token = jwtService.generateToken(user);
         return new ResponseEntity<>(token, HttpStatus.OK);
@@ -92,11 +94,13 @@ public class UserController {
     @PostMapping("/saveScore")
     @SecurityRequirement(name = "bearerToken")
     public ResponseEntity<String> saveScore(@RequestBody ScoreDto scoreDto){
-        userService.saveUserScoreByName(scoreDto.getName(), scoreDto.getScore());
-        return new ResponseEntity<>("Score saved success!", HttpStatus.OK);
+        if (userService.saveUserScoreByName(scoreDto.getName(), scoreDto.getScore())){
+            return new ResponseEntity<>("Score saved success!", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("User is not found!", HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/testemail")
+    @PostMapping("/testEmail")
     public ResponseEntity<String> testEmail(){
         String to = "mustafa.ilbey@hotmail.com";
         String subject = "Test Email";

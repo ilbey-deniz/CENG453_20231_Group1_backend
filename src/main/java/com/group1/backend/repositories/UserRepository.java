@@ -3,6 +3,7 @@ package com.group1.backend.repositories;
 import com.group1.backend.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -26,6 +27,15 @@ public interface UserRepository extends JpaRepository <UserEntity, Integer> {
              """,
             nativeQuery = true)
         Collection<Object> findLastTestUser();
+
+    @Query(value= """
+            select U.name
+            from user U
+            where U.name like '%testuser%'
+            group by U.name
+            limit :limitNumber
+            """, nativeQuery = true)
+    Collection<Object []> findMultipleTestUser(@Param("limitNumber") int limitNumber);
 
     void deleteByName(String userName);
 }

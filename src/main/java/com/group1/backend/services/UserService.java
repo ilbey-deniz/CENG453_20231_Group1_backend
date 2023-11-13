@@ -6,6 +6,7 @@ import com.group1.backend.entities.UserEntity;
 import com.group1.backend.enums.TimeInterval;
 import com.group1.backend.repositories.ScoreRepository;
 import com.group1.backend.repositories.UserRepository;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -82,10 +83,10 @@ public class UserService {
         this.userRepository.save(user);
     }
 
-    public void saveUserScoreByName(String userName, int score){
+    public boolean saveUserScoreByName(String userName, int score){
         Optional<UserEntity> user = this.userRepository.findByName(userName);
         if (user.isEmpty()) {
-            return;
+            return false;
         }
         ScoreEntity scoreEntity = new ScoreEntity();
         scoreEntity.setUser(user.orElseThrow());
@@ -97,6 +98,7 @@ public class UserService {
         scoreEntity.setUser(user.orElseThrow());
 
         this.scoreRepository.save(scoreEntity);
+        return true;
     }
 
     public int findTotalScoreByName(String userName){
@@ -119,6 +121,11 @@ public class UserService {
         return dataCollection.
                 stream().map(data -> new TopScoreUserDto((String) data[0], (BigDecimal) data[1])).toList();
 
+    }
+
+    public List<String> findMultipleTestUser(int limitNumber){
+        Collection<Object[]> dataCollection = this.userRepository.findMultipleTestUser(limitNumber);
+        return dataCollection.stream().map(data -> (String) data[0]).toList();
     }
 
     public String generateRandomPassword(int i) {

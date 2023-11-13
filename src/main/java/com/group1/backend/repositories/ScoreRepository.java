@@ -42,18 +42,6 @@ public interface ScoreRepository extends JpaRepository<ScoreEntity, Integer> {
             nativeQuery = true)
     Collection<Object[]> findTopScorerAllTime();
 
-//    TODO: use this to add score to multiple user
-    @Query(
-            value = """
-                    select U.name, sum(S.score) as total_score
-                    from user U, score S
-                    where U.id = S.user_id and U.name like '%testuser%'
-                    group by U.name
-                    order by total_score desc
-                    limit 15""",
-            nativeQuery = true)
-    Collection<Object[]> findTopScorerTestUser();
-
     @Query(
             value = """
                     select sum(S.score) as total_score
