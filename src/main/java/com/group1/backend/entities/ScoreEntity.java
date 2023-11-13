@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Table(name = "score")
 public class ScoreEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int scoreId;
 
     @Column(nullable = false)
