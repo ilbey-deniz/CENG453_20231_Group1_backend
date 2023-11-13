@@ -49,7 +49,8 @@ public interface ScoreRepository extends JpaRepository<ScoreEntity, Integer> {
                     from user U, score S
                     where U.id = S.user_id and U.name like '%testuser%'
                     group by U.name
-                    order by total_score desc""",
+                    order by total_score desc
+                    limit 15""",
             nativeQuery = true)
     Collection<Object[]> findTopScorerTestUser();
 

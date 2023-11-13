@@ -58,6 +58,9 @@ public class UserService {
 
     public String getLastTestUserName(){
         Collection<Object> lastTestUser = this.userRepository.findLastTestUser();
+        if (lastTestUser.isEmpty()) {
+            return "TestUser0";
+        }
         return lastTestUser.stream().findFirst().orElseThrow().toString();
     }
 
@@ -81,7 +84,9 @@ public class UserService {
 
     public void saveUserScoreByName(String userName, int score){
         Optional<UserEntity> user = this.userRepository.findByName(userName);
-
+        if (user.isEmpty()) {
+            return;
+        }
         ScoreEntity scoreEntity = new ScoreEntity();
         scoreEntity.setUser(user.orElseThrow());
         scoreEntity.setScore(score);
