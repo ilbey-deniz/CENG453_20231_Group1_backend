@@ -41,7 +41,9 @@ public class UserController {
     @GetMapping("/get/users")
     @SecurityRequirement(name = "bearerToken")
     public List<UserEntity> findAllUsers(){
-        return userService.getAllUsers();
+        List<UserEntity> users = userService.getAllUsers();
+        users.forEach(user -> user.setPassword("YOU ARE SECURE"));
+        return users;
     }
 
     @GetMapping("/get/topScorers/weekly")
