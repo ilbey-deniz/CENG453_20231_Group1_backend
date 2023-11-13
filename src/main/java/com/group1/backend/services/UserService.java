@@ -121,6 +121,11 @@ public class UserService {
 
     }
 
+    public List<String> findMultipleTestUser(int limitNumber){
+        Collection<Object[]> dataCollection = this.userRepository.findMultipleTestUser(limitNumber);
+        return dataCollection.stream().map(data -> (String) data[0]).toList();
+    }
+
     public String generateRandomPassword(int i) {
         Random random = new Random();
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

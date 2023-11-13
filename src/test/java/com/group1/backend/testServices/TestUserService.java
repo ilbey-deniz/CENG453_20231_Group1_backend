@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+import java.util.Random;
+
 @SpringBootTest
 public class TestUserService {
 
@@ -63,6 +66,49 @@ public class TestUserService {
         userService.saveUserScoreByName(username, 7);
         int secondTotalScore = userService.findTotalScoreByName(username);
         Assertions.assertEquals(firstTotalScore + 7, secondTotalScore);
+
+    }
+
+    @Test
+    public void testAddMultipleScoreToOneUser(){
+        Random random = new Random();
+        List<Integer> digitList = List.of(2,3,4,5,6,7,8);
+        int totalChangeInScore = 0;
+        String username = userService.getLastTestUserName();
+        int firstTotalScore = userService.findTotalScoreByName(username);
+
+        for(int i = 0; i < 10; i++){
+            int index = random.nextInt(digitList.size());
+            totalChangeInScore += digitList.get(index);
+            userService.saveUserScoreByName(username, digitList.get(index));
+        }
+
+        int secondTotalScore = userService.findTotalScoreByName(username);
+        Assertions.assertEquals(firstTotalScore + totalChangeInScore, secondTotalScore);
+    }
+
+    @Test
+    public void testAddMultipleScoreToMultipleUser(){
+        int totalPlayerToAddScore = 10;
+        int totalScoreCountToAddUser = 10;
+
+        Random random = new Random();
+        List<Integer> digitList = List.of(2,3,4,5,6,7,8);
+        List<String> usernames = userService.findMultipleTestUser(totalPlayerToAddScore);
+        for (String name : usernames) {
+
+            int totalChangeInScore = 0;
+            int firstTotalScore = userService.findTotalScoreByName(name);
+
+            for(int i = 0; i < totalScoreCountToAddUser; i++){
+                int index = random.nextInt(digitList.size());
+                totalChangeInScore += digitList.get(index);
+                userService.saveUserScoreByName(name, digitList.get(index));
+            }
+
+            int secondTotalScore = userService.findTotalScoreByName(name);
+            Assertions.assertEquals(firstTotalScore + totalChangeInScore, secondTotalScore);
+        }
 
     }
 }
