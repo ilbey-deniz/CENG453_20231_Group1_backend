@@ -16,6 +16,7 @@ public class ScoreEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int scoreId;
 
+    @Column(nullable = false)
     private int score;
     private LocalDate time;
 
