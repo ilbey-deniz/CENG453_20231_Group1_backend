@@ -71,6 +71,9 @@ public class UserController {
         if (userService.isUserExistByName(registerDto.getName())) {
             return new ResponseEntity<>("Username is already taken!", HttpStatus.BAD_REQUEST);
         }
+        if (userService.isUserExistByEmail(registerDto.getEmail())) {
+            return new ResponseEntity<>("Email is already taken!", HttpStatus.BAD_REQUEST);
+        }
         UserEntity user = userService.createUser(registerDto.getName(), registerDto.getEmail(),
                 registerDto.getPassword(), "ROLE_ADMIN");
         userService.saveUser(user);
