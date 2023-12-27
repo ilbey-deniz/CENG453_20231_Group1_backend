@@ -32,7 +32,6 @@ public interface UserRepository extends JpaRepository <UserEntity, Integer> {
             select U.name
             from user U
             where U.name like '%testuser%'
-            group by U.name
             limit :limitNumber
             """, nativeQuery = true)
     Collection<Object []> findMultipleTestUser(@Param("limitNumber") int limitNumber);

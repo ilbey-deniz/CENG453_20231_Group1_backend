@@ -16,22 +16,6 @@ public class TestUserService {
     @Autowired
     UserService userService;
 
-    @Test
-    public void testCreateMultipleUser(){
-        int firstLength = userService.getAllUsers().size();
-        String PASSWORD_PREFIX = "HardPassword";
-        String USERNAME_PREFIX = "TestUser";
-        String username = userService.getLastTestUserName();
-        int lastTestUserNumber = Integer.parseInt(username.substring(USERNAME_PREFIX.length()));
-        for(int i = lastTestUserNumber+1; i < lastTestUserNumber+11; i++){
-            String name = USERNAME_PREFIX + i;
-            String password = PASSWORD_PREFIX + i;
-            String email = name + "@mail.com";
-            userService.createUser(name, email, password, "ROLE_USER");
-        }
-        int secondLength = userService.getAllUsers().size();
-        Assertions.assertEquals(firstLength + 10, secondLength);
-    }
 
     @Test
     public void testCreateUser(){
@@ -51,6 +35,24 @@ public class TestUserService {
     }
 
     @Test
+    public void testCreateMultipleUser(){
+        int userCreationCount = 10;
+        int firstLength = userService.getAllUsers().size();
+        String PASSWORD_PREFIX = "HardPassword";
+        String USERNAME_PREFIX = "TestUser";
+        String username = userService.getLastTestUserName();
+        int lastTestUserNumber = Integer.parseInt(username.substring(USERNAME_PREFIX.length()));
+        for(int i = lastTestUserNumber+1; i < lastTestUserNumber+userCreationCount+1 ; i++){
+            String name = USERNAME_PREFIX + i;
+            String password = PASSWORD_PREFIX + i;
+            String email = name + "@mail.com";
+            userService.createUser(name, email, password, "ROLE_USER");
+        }
+        int secondLength = userService.getAllUsers().size();
+        Assertions.assertEquals(firstLength + userCreationCount, secondLength);
+    }
+
+    @Test
     public void testDeleteUser(){
         String lastTestUserName = userService.getLastTestUserName();
         int firstLength = userService.getAllUsers().size();
@@ -61,11 +63,15 @@ public class TestUserService {
 
     @Test
     public void testSaveUserScore(){
+        Random random = new Random();
+        List<Integer> digitList = List.of(2,3,4,5,6,7,8);
+        int index = random.nextInt(digitList.size());
+        int totalChangeInScore = digitList.get(index);
         String username = userService.getLastTestUserName();
         int firstTotalScore = userService.findTotalScoreByName(username);
-        userService.saveUserScoreByName(username, 7);
+        userService.saveUserScoreByName(username, totalChangeInScore);
         int secondTotalScore = userService.findTotalScoreByName(username);
-        Assertions.assertEquals(firstTotalScore + 7, secondTotalScore);
+        Assertions.assertEquals(firstTotalScore + totalChangeInScore, secondTotalScore);
 
     }
 
