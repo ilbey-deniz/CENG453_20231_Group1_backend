@@ -5,10 +5,14 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.util.UriTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static com.group1.backend.constants.WebSocketConstants.WEBSOCKET_ENDPOINT;
+
 @Slf4j
 public class SocketHandler implements WebSocketHandler {
 
@@ -23,9 +27,15 @@ public class SocketHandler implements WebSocketHandler {
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         log.info("Message received: " + message.getPayload());
+        UriTemplate template = new UriTemplate(WEBSOCKET_ENDPOINT);
+        String roomCode = template.match(session.getUri().getPath()).get("roomCode");
+        log.info("Room code: " + roomCode);
         for (WebSocketSession sess : sessions) {
-
-            sess.sendMessage(message);
+            String sessRoomCode = template.match(sess.getUri().getPath()).get("roomCode");
+            if (sess.isOpen() && !sess.getId().equals(session.getId()) && roomCode.equals(sessRoomCode)){
+                log.info("Sending message to: " + sess.getRemoteAddress().getHostName());
+                sess.sendMessage(message);
+            }
         }
     }
 

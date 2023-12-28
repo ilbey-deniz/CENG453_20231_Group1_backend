@@ -23,7 +23,7 @@ public class GameController {
 
     private final HashMap<String, GameRoom> gameRooms = new HashMap<>();
     WebsocketConfig websocketConfig;
-    @PostMapping("/create/game")
+    @PostMapping("/game/create")
     public ResponseEntity<?> createGame(@RequestBody PlayerDto playerDto){
         GameRoom gameRoom = new GameRoom();
         // generate random room code with 5 digits
@@ -33,14 +33,13 @@ public class GameController {
         gameRoom.setPlayers(players);
         gameRoom.setRoomCode(roomCode);
         gameRooms.put(roomCode, gameRoom);
-        return new ResponseEntity<>("Room created success", HttpStatus.OK);
+        return new ResponseEntity<>(roomCode, HttpStatus.OK);
     }
 
-    @PostMapping("/join/game")
+    @PostMapping("/game/join")
     public void joinGame(@RequestBody JoinGameDto joinGameDto){
         GameRoom gameRoom = gameRooms.get(joinGameDto.getRoomCode());
         gameRoom.getPlayers().add(joinGameDto.getPlayer());
-        
 
     }
 
