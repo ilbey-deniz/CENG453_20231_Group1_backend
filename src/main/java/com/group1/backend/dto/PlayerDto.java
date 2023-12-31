@@ -1,12 +1,13 @@
 package com.group1.backend.dto;
 
 
+import com.group1.backend.enums.PlayerColor;
 import lombok.Data;
 
 @Data
 public class PlayerDto {
     String name;
-    String color;
+    PlayerColor color;
     boolean ready;
     boolean host;
     boolean cpu;
