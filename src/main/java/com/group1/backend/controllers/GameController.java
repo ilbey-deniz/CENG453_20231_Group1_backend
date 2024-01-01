@@ -1,7 +1,7 @@
 package com.group1.backend.controllers;
 
 import com.group1.backend.config.WebsocketConfig;
-import com.group1.backend.dto.JoinGameDto;
+import com.group1.backend.dto.GameRoom_PlayerDto;
 import com.group1.backend.dto.PlayerDto;
 import com.group1.backend.entities.GameRoom;
 import com.group1.backend.enums.PlayerColor;
@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -43,9 +41,9 @@ public class GameController {
     }
 
     @PostMapping("/game/join")
-    public ResponseEntity<?> joinGame(@RequestBody JoinGameDto joinGameDto){
+    public ResponseEntity<?> joinGame(@RequestBody GameRoom_PlayerDto gameRoomPlayerDto){
         //TODO: move this to a service
-        GameRoom gameRoom = gameRooms.get(joinGameDto.getRoomCode());
+        GameRoom gameRoom = gameRooms.get(gameRoomPlayerDto.getRoomCode());
         //checks for room code validity
         if(gameRoom == null){
             return new ResponseEntity<>("Room code is invalid", HttpStatus.BAD_REQUEST);
@@ -54,19 +52,45 @@ public class GameController {
         if(gameRoom.getPlayers().size() == 4){
             return new ResponseEntity<>("Room is full", HttpStatus.BAD_REQUEST);
         }
-        //gives the player a random color
-        //for each color in PlayerColor enum, if the color is not in the game room, assign it to the player
+        //gives the player a non duplicate color
         PlayerColor color = null;
-        for (PlayerColor playerColor : PlayerColor.values()) {
-            if (!gameRoom.getPlayers().containsValue(playerColor)) {
-                color = playerColor;
-                break;
+        while(color == null){
+            color = PlayerColor.getRandomColor();
+            for(PlayerDto player : gameRoom.getPlayers().values()){
+                if(player.getColor() == color){
+                    color = null;
+                    break;
+                }
             }
         }
 
-        joinGameDto.getPlayer().setColor(color);
-        gameRoom.getPlayers().put(joinGameDto.getPlayer().getName(), joinGameDto.getPlayer());
+        gameRoomPlayerDto.getPlayer().setColor(color);
+        gameRoom.getPlayers().put(gameRoomPlayerDto.getPlayer().getName(), gameRoomPlayerDto.getPlayer());
         return new ResponseEntity<>(gameRoom, HttpStatus.OK);
     }
+    @PostMapping("/game/playerKicked")
+    public ResponseEntity<?> kickPlayer(@RequestBody GameRoom_PlayerDto gameRoomPlayerDto){
+        //return bad request if player is not in the room
+        if(!gameRooms.get(gameRoomPlayerDto.getRoomCode()).getPlayers().containsKey(gameRoomPlayerDto.getPlayer().getName())){
+            return new ResponseEntity<>("Player is not in the room", HttpStatus.BAD_REQUEST);
+        }
+        gameRooms.get(gameRoomPlayerDto.getRoomCode()).getPlayers().remove(gameRoomPlayerDto.getPlayer().getName());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @PostMapping("/game/playerLeft")
+    public ResponseEntity<?> playerLeft(@RequestBody GameRoom_PlayerDto gameRoomPlayerDto){
+        //return bad request if player is not in the room
+        if(!gameRooms.get(gameRoomPlayerDto.getRoomCode()).getPlayers().containsKey(gameRoomPlayerDto.getPlayer().getName())){
+            return new ResponseEntity<>("Player is not in the room", HttpStatus.BAD_REQUEST);
+        }
+        //if the player is the host, delete the room
+        if(gameRooms.get(gameRoomPlayerDto.getRoomCode()).getHostName().equals(gameRoomPlayerDto.getPlayer().getName())){
+            gameRooms.remove(gameRoomPlayerDto.getRoomCode());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        gameRooms.get(gameRoomPlayerDto.getRoomCode()).getPlayers().remove(gameRoomPlayerDto.getPlayer().getName());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
 }
