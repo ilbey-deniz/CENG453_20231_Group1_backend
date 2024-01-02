@@ -35,6 +35,7 @@ public class GameController {
         gameRoom.setPlayers(players);
         gameRoom.setRoomCode(roomCode);
         gameRoom.setHostName(playerDto.getName());
+        gameRoom.setIsStarted(false);
         gameRooms.put(roomCode, gameRoom);
         log.info("Game room created with room code: " + roomCode);
         return new ResponseEntity<>(roomCode, HttpStatus.OK);
@@ -51,6 +52,10 @@ public class GameController {
         //checks whether room is full
         if(gameRoom.getPlayers().size() == 4){
             return new ResponseEntity<>("Room is full", HttpStatus.BAD_REQUEST);
+        }
+        //checks game has started or not
+        if(gameRoom.getIsStarted()){
+            return new ResponseEntity<>("Game has already started", HttpStatus.BAD_REQUEST);
         }
         //gives the player a non duplicate color
         PlayerColor color = null;
@@ -92,5 +97,14 @@ public class GameController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/game/playerReady")
+    public ResponseEntity<?> playerReady(@RequestBody GameRoom_PlayerDto gameRoomPlayerDto){
+        //return bad request if player is not in the room
+        if(!gameRooms.get(gameRoomPlayerDto.getRoomCode()).getPlayers().containsKey(gameRoomPlayerDto.getPlayer().getName())){
+            return new ResponseEntity<>("Player is not in the room", HttpStatus.BAD_REQUEST);
+        }
+        gameRooms.get(gameRoomPlayerDto.getRoomCode()).getPlayers().get(gameRoomPlayerDto.getPlayer().getName()).setReady(true);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

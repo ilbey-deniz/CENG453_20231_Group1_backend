@@ -4,12 +4,12 @@ import com.group1.backend.dto.PlayerDto;
 import lombok.Data;
 
 import java.util.HashMap;
-import java.util.List;
 
 @Data
 public class GameRoom {
     String roomCode;
     String hostName;
+    Boolean isStarted;
     HashMap<String, PlayerDto> players;
 
 }
