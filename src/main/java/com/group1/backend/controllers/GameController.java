@@ -49,6 +49,10 @@ public class GameController {
         if(gameRoom == null){
             return new ResponseEntity<>("Room code is invalid", HttpStatus.BAD_REQUEST);
         }
+        //checks whether player name is duplicate
+        if(gameRoom.getPlayers().containsKey(gameRoomPlayerDto.getPlayer().getName())){
+            return new ResponseEntity<>("Player already joined the room", HttpStatus.BAD_REQUEST);
+        }
         //checks whether room is full
         if(gameRoom.getPlayers().size() == 4){
             return new ResponseEntity<>("Room is full", HttpStatus.BAD_REQUEST);
