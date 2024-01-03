@@ -19,17 +19,17 @@ public class SocketHandler implements WebSocketHandler {
     List<WebSocketSession> sessions = new ArrayList<>();
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session){
+        session.setTextMessageSizeLimit(1024 * 1024);
         log.info("Connection established with: "+ Objects.requireNonNull(session.getRemoteAddress()).getHostName());
         sessions.add(session);
     }
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        log.info("Message received: " + message.getPayload());
         UriTemplate template = new UriTemplate(WEBSOCKET_ENDPOINT);
         String roomCode = template.match(session.getUri().getPath()).get("roomCode");
-        log.info("Room code: " + roomCode);
+        log.info("Received message from room:" + roomCode);
         for (WebSocketSession sess : sessions) {
             String sessRoomCode = template.match(sess.getUri().getPath()).get("roomCode");
             if (sess.isOpen() && !sess.getId().equals(session.getId()) && roomCode.equals(sessRoomCode)){
@@ -40,12 +40,13 @@ public class SocketHandler implements WebSocketHandler {
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+    public void handleTransportError(WebSocketSession session, Throwable exception){
         log.error("Error occurred at sender " + session, exception);
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
+        log.info("Connection closed with status: "+ closeStatus.getReason());
         log.info("Connection closed with: "+ Objects.requireNonNull(session.getRemoteAddress()).getHostName());
         sessions.remove(session);
     }

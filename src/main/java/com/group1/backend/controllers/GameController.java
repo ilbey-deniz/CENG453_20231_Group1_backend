@@ -73,6 +73,20 @@ public class GameController {
         gameRoom.getPlayers().put(gameRoomPlayerDto.getPlayer().getName(), gameRoomPlayerDto.getPlayer());
         return new ResponseEntity<>(gameRoom, HttpStatus.OK);
     }
+    @PostMapping("/game/start")
+    public ResponseEntity<?> startGame(@RequestBody GameRoom_PlayerDto gameRoomPlayerDto){
+        //check all players are ready
+        for(PlayerDto player : gameRooms.get(gameRoomPlayerDto.getRoomCode()).getPlayers().values()){
+            if(!player.isReady()){
+                return new ResponseEntity<>("All players must be ready", HttpStatus.BAD_REQUEST);
+            }
+        }
+        //check there are at least 2 players
+        if(gameRooms.get(gameRoomPlayerDto.getRoomCode()).getPlayers().size() < 2){
+            return new ResponseEntity<>("There must be at least 2 players", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
     @PostMapping("/game/playerKicked")
     public ResponseEntity<?> kickPlayer(@RequestBody GameRoom_PlayerDto gameRoomPlayerDto){
         //return bad request if player is not in the room
