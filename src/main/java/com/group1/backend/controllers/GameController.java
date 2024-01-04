@@ -3,18 +3,17 @@ package com.group1.backend.controllers;
 import com.group1.backend.config.WebsocketConfig;
 import com.group1.backend.dto.GameRoom_PlayerDto;
 import com.group1.backend.dto.PlayerDto;
+import com.group1.backend.dto.RoomCodeDto;
 import com.group1.backend.entities.GameRoom;
 import com.group1.backend.enums.PlayerColor;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequestMapping("/api")
@@ -23,7 +22,9 @@ import java.util.HashMap;
 public class GameController {
 
     private final HashMap<String, GameRoom> gameRooms = new HashMap<>();
-    WebsocketConfig websocketConfig;
+    private WebsocketConfig websocketConfig;
+    private final HashMap<String, AtomicBoolean> ongoingTrades = new HashMap<>();
+
     @PostMapping("/game/create")
     public ResponseEntity<?> createGame(@RequestBody PlayerDto playerDto){
         //TODO: move this to a service
@@ -36,6 +37,7 @@ public class GameController {
         gameRoom.setRoomCode(roomCode);
         gameRoom.setHostName(playerDto.getName());
         gameRoom.setIsStarted(false);
+        ongoingTrades.put(roomCode, new AtomicBoolean(false));
         gameRooms.put(roomCode, gameRoom);
         log.info("Game room created with room code: " + roomCode);
         return new ResponseEntity<>(roomCode, HttpStatus.OK);
@@ -122,6 +124,20 @@ public class GameController {
             return new ResponseEntity<>("Player is not in the room", HttpStatus.BAD_REQUEST);
         }
         gameRooms.get(gameRoomPlayerDto.getRoomCode()).getPlayers().get(gameRoomPlayerDto.getPlayer().getName()).setReady(true);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/game/tradeInit")
+    public ResponseEntity<?> trade(@RequestBody RoomCodeDto roomCodeDto){
+        ongoingTrades.get(roomCodeDto.getRoomCode()).set(true);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @PostMapping("/game/tradeAccept")
+    public ResponseEntity<?> tradeAccept(@RequestBody RoomCodeDto roomCodeDto){
+        if(!ongoingTrades.get(roomCodeDto.getRoomCode()).get()){
+            return new ResponseEntity<>("There is no ongoing trade", HttpStatus.BAD_REQUEST);
+        }
+        ongoingTrades.get(roomCodeDto.getRoomCode()).set(false);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
