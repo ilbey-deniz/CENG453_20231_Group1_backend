@@ -6,6 +6,7 @@ import com.group1.backend.dto.PlayerDto;
 import com.group1.backend.dto.RoomCodeDto;
 import com.group1.backend.entities.GameRoom;
 import com.group1.backend.enums.PlayerColor;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,7 @@ public class GameController {
     }
 
     @PostMapping("/game/join")
+    @SecurityRequirement(name = "bearerToken")
     public ResponseEntity<?> joinGame(@RequestBody GameRoom_PlayerDto gameRoomPlayerDto){
         //TODO: move this to a service
         GameRoom gameRoom = gameRooms.get(gameRoomPlayerDto.getRoomCode());
@@ -80,6 +82,7 @@ public class GameController {
         return new ResponseEntity<>(gameRoom, HttpStatus.OK);
     }
     @PostMapping("/game/start")
+    @SecurityRequirement(name = "bearerToken")
     public ResponseEntity<?> startGame(@RequestBody GameRoom_PlayerDto gameRoomPlayerDto){
         //check all players are ready
         for(PlayerDto player : gameRooms.get(gameRoomPlayerDto.getRoomCode()).getPlayers().values()){
@@ -94,6 +97,7 @@ public class GameController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PostMapping("/game/playerKicked")
+    @SecurityRequirement(name = "bearerToken")
     public ResponseEntity<?> kickPlayer(@RequestBody GameRoom_PlayerDto gameRoomPlayerDto){
         //return bad request if player is not in the room
         if(!gameRooms.get(gameRoomPlayerDto.getRoomCode()).getPlayers().containsKey(gameRoomPlayerDto.getPlayer().getName())){
@@ -103,6 +107,7 @@ public class GameController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PostMapping("/game/playerLeft")
+    @SecurityRequirement(name = "bearerToken")
     public ResponseEntity<?> playerLeft(@RequestBody GameRoom_PlayerDto gameRoomPlayerDto){
         //return bad request if player is not in the room
         if(!gameRooms.get(gameRoomPlayerDto.getRoomCode()).getPlayers().containsKey(gameRoomPlayerDto.getPlayer().getName())){
@@ -118,6 +123,7 @@ public class GameController {
     }
 
     @PostMapping("/game/playerReady")
+    @SecurityRequirement(name = "bearerToken")
     public ResponseEntity<?> playerReady(@RequestBody GameRoom_PlayerDto gameRoomPlayerDto){
         //return bad request if player is not in the room
         if(!gameRooms.get(gameRoomPlayerDto.getRoomCode()).getPlayers().containsKey(gameRoomPlayerDto.getPlayer().getName())){
@@ -128,11 +134,13 @@ public class GameController {
     }
 
     @PostMapping("/game/tradeInit")
+    @SecurityRequirement(name = "bearerToken")
     public ResponseEntity<?> trade(@RequestBody RoomCodeDto roomCodeDto){
         ongoingTrades.get(roomCodeDto.getRoomCode()).set(true);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PostMapping("/game/tradeAccept")
+    @SecurityRequirement(name = "bearerToken")
     public ResponseEntity<?> tradeAccept(@RequestBody RoomCodeDto roomCodeDto){
         if(!ongoingTrades.get(roomCodeDto.getRoomCode()).get()){
             return new ResponseEntity<>("There is no ongoing trade", HttpStatus.BAD_REQUEST);
