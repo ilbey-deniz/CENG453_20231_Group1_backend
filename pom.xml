@@ -129,13 +129,7 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
-					<skip>true</skip>
 				</configuration>
-				<executions>
-					<execution>
-						<phase>none</phase>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
