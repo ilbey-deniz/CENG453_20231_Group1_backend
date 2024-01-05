@@ -27,6 +27,7 @@ public class GameController {
     private final HashMap<String, AtomicBoolean> ongoingTrades = new HashMap<>();
 
     @PostMapping("/game/create")
+    @SecurityRequirement(name = "bearerToken")
     public ResponseEntity<?> createGame(@RequestBody PlayerDto playerDto){
         //TODO: move this to a service
         GameRoom gameRoom = new GameRoom();
